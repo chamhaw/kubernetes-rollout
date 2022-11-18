@@ -32,9 +32,9 @@ replace (
 )
 
 require (
+	github.com/chamhaw/kubernetes-rollout/api v0.0.0-00010101000000-000000000000
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/sirupsen/logrus v1.9.0
-	github.com/chamhaw/kubernetes-rollout/api v0.0.0-00010101000000-000000000000
 	k8s.io/api v0.25.4
 	k8s.io/apimachinery v0.25.4
 	k8s.io/client-go v0.25.4
