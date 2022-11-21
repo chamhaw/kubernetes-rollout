@@ -2,8 +2,8 @@ package controller
 
 import (
 	"context"
-	v1alpha12 "github.com/chamhaw/kubernetes-rollout-api/v1alpha1"
-	"github.com/chamhaw/kubernetes-rollout/v1"
+	apiv1alpha1 "github.com/chamhaw/kubernetes-rollout-api/v1alpha1"
+	"github.com/chamhaw/kubernetes-rollout/v1alpha1"
 	log "github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/client-go/kubernetes"
@@ -20,7 +20,7 @@ type Manager struct {
 }
 
 // NewManager returns a new manager to manage all the controllers
-func NewManager(kubeclientset kubernetes.Interface, rolloutManager v1alpha12.RolloutInterface, rolloutWorkqueue workqueue.RateLimitingInterface) *Manager {
+func NewManager(kubeclientset kubernetes.Interface, rolloutManager apiv1alpha1.RolloutInterface, rolloutWorkqueue workqueue.RateLimitingInterface) *Manager {
 
 	rolloutController := v1.NewController(v1.ControllerConfig{
 		KubeClientSet:    kubeclientset,

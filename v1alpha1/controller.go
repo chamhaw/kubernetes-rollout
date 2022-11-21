@@ -6,7 +6,7 @@ import (
 	"fmt"
 	v1alpha12 "github.com/chamhaw/kubernetes-rollout-api/v1alpha1"
 	"github.com/chamhaw/kubernetes-rollout/utils/rollout"
-	"github.com/chamhaw/kubernetes-rollout/v1/validation"
+	"github.com/chamhaw/kubernetes-rollout/v1alpha1/validation"
 	"k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/util/workqueue"

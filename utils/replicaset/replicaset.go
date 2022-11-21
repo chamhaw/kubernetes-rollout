@@ -624,3 +624,20 @@ func IsReplicaSetAvailable(rs *appsv1.ReplicaSet) bool {
 	availableReplicas := rs.Status.AvailableReplicas
 	return replicas != nil && *replicas != 0 && availableReplicas != 0 && *replicas <= availableReplicas
 }
+
+func GetReplicaSetsOwnedByRollout(ctx context.Context, client kubernetes.Interface, rollout *v1alpha1.Rollout) ([]*appsv1.ReplicaSet, error) {
+	rss, err := client.AppsV1().ReplicaSets(rollout.Namespace).List(ctx, metav1.ListOptions{
+		LabelSelector: metav1.FormatLabelSelector(rollout.Spec.Selector),
+	})
+	if err != nil {
+		return nil, err
+	}
+	var rsOwnedByRS []*appsv1.ReplicaSet
+	for i := range rss.Items {
+		rs := rss.Items[i]
+		if metav1.IsControlledBy(&rs, rollout) {
+			rsOwnedByRS = append(rsOwnedByRS, &rs)
+		}
+	}
+	return rsOwnedByRS, nil
+}

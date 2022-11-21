@@ -7,7 +7,6 @@ import (
 	"github.com/chamhaw/kubernetes-rollout/utils/defaults"
 	log "github.com/sirupsen/logrus"
 	appsv1 "k8s.io/api/apps/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/kubernetes/pkg/controller"
 	"sort"
 
@@ -15,33 +14,14 @@ import (
 )
 
 // 用rollout 筛选 RS
-func (c *Controller) getReplicaSetsForRollout(r *v1alpha1.Rollout) (rsList []*appsv1.ReplicaSet, err error) {
+func (c *Controller) getReplicaSetsForRollout(rollout *v1alpha1.Rollout) (rsList []*appsv1.ReplicaSet, err error) {
 
-	replicaSetSelector, err := metav1.LabelSelectorAsSelector(r.Spec.Selector)
-	if err != nil {
-		return nil, fmt.Errorf("rollout %s/%s has invalid label selector: %v", r.Namespace, r.Name, err)
-	}
-
-	// 注意：这里可能会产生孤儿RS无法被匹配到，因为 selector可能改变了
-	list, err := c.kubeclientset.AppsV1().ReplicaSets(r.Namespace).List(context.TODO(), metav1.ListOptions{
-		LabelSelector: replicaSetSelector.String(),
-	})
-
+	rss, err := replicasetutil.GetReplicaSetsOwnedByRollout(context.TODO(), c.kubeclientset, rollout)
 	if err != nil {
 		return nil, err
 	}
-
-	for _, item := range list.Items {
-		belongsToThisRollout := false
-		for _, ownerReference := range item.OwnerReferences {
-			if ownerReference.Kind != "Rollout" || ownerReference.Name != r.Name {
-				continue
-			}
-			belongsToThisRollout = true
-		}
-		if belongsToThisRollout {
-			rsList = append(rsList, item.DeepCopy())
-		}
+	for _, rs := range rss {
+		rsList = append(rsList, rs.DeepCopy())
 	}
 	return
 }
